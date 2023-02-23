@@ -1,0 +1,80 @@
+POST http://127.0.0.1:9000/api/recipes/create
+Content-Type: application/json
+
+{
+    "name": "Gyümülcs leves",
+    "description": "Teszt",
+    "steps": ["1", "2", "3", "4", "5", "6", "7"],
+    "createUserId": "1111111111"
+}
+
+###
+GET http://127.0.0.1:9000/api/recipes
+
+###
+GET http://127.0.0.1:9000/api/recipes/63f6597e656e1e7bf6406725
+
+###
+GET http://127.0.0.1:9000/api/recipes/search/leves
+
+###
+PUT http://127.0.0.1:9000/api/recipes/63f65975656e1e7bf6406723
+Content-Type: application/json
+
+{
+    "steps": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+    ]
+}
+
+###
+DELETE http://127.0.0.1:9000/api/recipes/63f6597e656e1e7bf6406725
+
+###
+PUT http://127.0.0.1:9000/api/recipes/63f65983656e1e7bf6406727/like
+
+###
+PUT http://127.0.0.1:9000/api/recipes/63f65983656e1e7bf6406727/save
+
+###
+POST http://127.0.0.1:9000/api/recipes/63f65983656e1e7bf6406727/comment
+Content-Type: application/json
+
+{
+    "text": "This is a comment 6",
+    "userId": "123"
+}
+
+###
+DELETE http://127.0.0.1:9000/api/recipes/63f65983656e1e7bf6406727/comment/63f74b3d57ddc7c64843f4ed
+
+###
+PUT http://127.0.0.1:9000/api/recipes/63f65983656e1e7bf6406727/category
+Content-Type: application/json
+
+{
+    "category": ["leves", "gyümölcs"]
+}
+
+###
+POST http://127.0.0.1:9000/api/users/register
+Content-Type: application/json
+
+{
+    "username": "teszt3",
+    "email": "teszt3@teszt3.com",
+    "password": "teszt3"
+}
+
+###
+POST http://127.0.0.1:9000/api/users/login
+Content-Type: application/json
+
+{
+    "email": "teszt3@teszt3.com",
+    "password": "teszt2"
+}
