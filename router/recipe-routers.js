@@ -3,6 +3,18 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Recipe = require("../models/Recipe");
 const { isValidObjectId } = require("mongoose");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  filename: (req, file, cb) =>{
+    const filename = file.originalname;
+    cb(null, filename);
+  },
+  destination: (req, file, cb) => {
+    cb(null, '../images/recipes');
+  }
+})
+const upload = multer({storage: storage});
 
 const router = express.Router();
 
@@ -14,17 +26,19 @@ function validId(id) {
 }
 
 // Create recipe
-router.post("/create", bodyParser.json(), async (req, res) => {
+router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (req, res) => {
   const createdRecipe = {
     name: req.body.name,
     description: req.body.description,
-    steps: req.body.steps,
+    steps: [req.body.steps],
+    ingredients: [req.body.ingredients],
     like: 0,
     save: 0,
     createUserId: req.body.createUserId,
     categories: [],
     comments: [],
     isEnable: false,
+    imageUrl: req.file
   };
   const result = await Recipe.create(createdRecipe);
   res
@@ -68,7 +82,7 @@ router.get("/search/:name", async (req, res) => {
 });
 
 // Update recipe by id
-router.put("/:id", bodyParser.json(), async (req, res) => {
+router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, res) => {
   const id = validId(req.params.id);
   if (id === "") {
     res.status(404).send({
@@ -76,7 +90,16 @@ router.put("/:id", bodyParser.json(), async (req, res) => {
     });
     return;
   }
-  const recipe = await Recipe.findByIdAndUpdate(id, req.body, { new: true });
+
+  const updateRecipe = {
+    name: req.body.name,
+    description: req.body.description,
+    steps: [req.body.steps],
+    ingredients: [req.body.ingredients],
+    imageUrl: [req.file]
+  }
+
+  const recipe = await Recipe.findByIdAndUpdate(id, null, { new: true });
   if (recipe === null) {
     res.status(404).send({
       message: "Not found recipe with id: " + req.params.id,
