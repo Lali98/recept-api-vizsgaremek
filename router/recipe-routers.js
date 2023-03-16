@@ -7,11 +7,11 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   filename: (req, file, cb) =>{
-    const filename = file.originalname;
+    const filename = file.originalname.split(".")[0] + `-${new Date().getTime()}.${file.mimetype.split('/')[1]}`;
     cb(null, filename);
   },
   destination: (req, file, cb) => {
-    cb(null, '../images/recipes');
+    cb(null, __dirname + '/../images/recipes');
   }
 })
 const upload = multer({storage: storage});
@@ -96,8 +96,10 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
     description: req.body.description,
     steps: [req.body.steps],
     ingredients: [req.body.ingredients],
-    imageUrl: [req.file]
+    imageUrl: []
   }
+
+  console.log(req.file);
 
   const recipe = await Recipe.findByIdAndUpdate(id, null, { new: true });
   if (recipe === null) {
