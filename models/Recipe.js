@@ -5,13 +5,11 @@ const recipeSchema = new Schema({
     description: String,
     steps: Array(Object),
     ingredients: Array(Object),
-    like: Number,
-    save: Number,
     comments: Array(Object),
     createdUserId: String,
     categories: Array(String),
     isEnable: Boolean,
-    imageUrls: Array(String)
+    imageUrl: String
 }, {timestamps: true});
 
 module.exports = model('recipe', recipeSchema);

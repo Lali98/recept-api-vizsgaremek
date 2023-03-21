@@ -5,16 +5,27 @@ const Recipe = require("../models/Recipe");
 const {isValidObjectId} = require("mongoose");
 const multer = require("multer");
 
+const DIR = './images/recipes';
 const storage = multer.diskStorage({
     filename: (req, file, cb) => {
-        const filename = file.originalname.split(".")[0] + `-${new Date().getTime()}.${file.mimetype.split('/')[1]}`;
-        cb(null, filename);
+        const fileName = file.originalname.toLowerCase().split(' ').join('-');
+        cb(null,  + Date.now() + '-' + fileName);
     },
     destination: (req, file, cb) => {
-        cb(null, __dirname + '/../images/recipes');
+        cb(null, DIR);
     }
 })
-const upload = multer({storage: storage});
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === "image/jpeg") {
+            cb(null, true);
+        } else {
+            cb(null, false);
+            return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+        }
+    }
+});
 
 const router = express.Router();
 
@@ -27,6 +38,7 @@ function validId(id) {
 
 // Create recipe
 router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (req, res) => {
+    const url = req.protocol + "://" + req.get('host');
     const createdRecipe = {
         name: req.body.name,
         description: req.body.description,
@@ -36,7 +48,7 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         categories: [req.body.categories],
         comments: [],
         isEnable: false,
-        imageUrl: req.file
+        imageUrl: req.file ? url + '/images/recipes/' + req.file.filename : ''
     };
     const result = await Recipe.create(createdRecipe);
     res
@@ -79,6 +91,13 @@ router.get("/search/:name", async (req, res) => {
     res.send(recipes).status(200);
 });
 
+// Get recipes by category
+router.get('/category/:category', async (req, res) => {
+    const category = req.params.category;
+    const recipes = await Recipe.find({categories: {$regex: category}});
+    res.send(recipes).status(200);
+})
+
 // Update recipe by id
 router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, res) => {
     const id = validId(req.params.id);
@@ -89,18 +108,26 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         return;
     }
 
+    const url = req.protocol + "://" + req.get('host');
+
+    const rec = await Recipe.findById(id);
+    if (rec === null) {
+        res.status(404).send({
+            message: "Not found recipe with id: " + req.params.id,
+        });
+        return;
+    }
+
     const updateRecipe = {
         name: req.body.name,
         description: req.body.description,
-        steps: [req.body.steps],
-        ingredients: [req.body.ingredients],
-        categories: [req.body.categories],
-        imageUrl: []
+        steps: req.body.steps,
+        ingredients: req.body.ingredients,
+        categories: req.body.categories,
+        imageUrl: req.file ? url + '/images/recipes/' + req.file.fileName : rec.imageUrl
     }
 
-    console.log(req.file);
-
-    const recipe = await Recipe.findByIdAndUpdate(id, null, {new: true});
+    const recipe = await Recipe.findByIdAndUpdate(id, updateRecipe, {new: true});
     if (recipe === null) {
         res.status(404).send({
             message: "Not found recipe with id: " + req.params.id,
@@ -128,7 +155,6 @@ router.delete("/:id", async (req, res) => {
     }
     res.send().status(204); // HTTP 204 No Content
 });
-
 
 // Enable recipe
 router.put("/:id/enable", async (req, res) => {
