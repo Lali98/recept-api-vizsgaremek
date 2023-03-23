@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const Recipe = require("../models/Recipe");
 const {isValidObjectId} = require("mongoose");
 const multer = require("multer");
+const mongoose = require("mongoose");
 
 const DIR = './images/recipes';
 const storage = multer.diskStorage({
@@ -44,7 +45,7 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         steps: [req.body.steps],
         ingredients: [req.body.ingredients],
         createUserId: req.body.createUserId,
-        categories: [req.body.categories],
+        categoriesIds: [req.body.categoriesIds],
         comments: [],
         isEnable: false,
         imageUrl: req.file ? url + '/images/recipes/' + req.file.filename : ''
@@ -90,10 +91,10 @@ router.get("/search/:name", async (req, res) => {
     res.send(recipes).status(200);
 });
 
-// Get recipes by category
-router.get('/category/:category', async (req, res) => {
-    const category = req.params.category;
-    const recipes = await Recipe.find({categories: {$regex: category}});
+// Get recipes by categoryId
+router.get('/category/:categoryId', async (req, res) => {
+    const categoryId = req.params.categoryId;
+    const recipes = await Recipe.find({categoriesIds: {$regex: categoryId}});
     res.send(recipes).status(200);
 })
 
@@ -122,8 +123,9 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         description: req.body.description,
         steps: req.body.steps,
         ingredients: req.body.ingredients,
-        categories: req.body.categories,
-        imageUrl: req.file ? url + '/images/recipes/' + req.file.fileName : rec.imageUrl
+        categoriesIds: req.body.categoriesIds,
+        imageUrl: req.file ? url + '/images/recipes/' + req.file.fileName : rec.imageUrl,
+        isEnable: req.body.isEnable
     }
 
     const recipe = await Recipe.findByIdAndUpdate(id, updateRecipe, {new: true});
@@ -156,7 +158,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Enable recipe
-router.put("/:id/enable", async (req, res) => {
+/*router.put("/:id/enable", async (req, res) => {
     const id = validId(req.params.id);
     if (id === "") {
         res.status(404).send({
@@ -199,7 +201,7 @@ router.put("/:id/disable", async (req, res) => {
         return;
     }
     res.send(recipe).status(200);
-});
+});*/
 
 // Create comment (add id to comment)
 router.post("/:id/comment", bodyParser.json(), async (req, res) => {
