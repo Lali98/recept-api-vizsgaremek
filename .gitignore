@@ -1,3 +1,9 @@
 node_modules/
 res.http
 .env
+.idea/modules.xml
+.idea/vcs.xml
+.idea/recept-api.iml
+.idea/inspectionProfiles/Project_Default.xml
+images/recipes/1679397543583-valami.jpg
+.idea/.gitignore

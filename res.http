@@ -2,10 +2,11 @@ POST http://127.0.0.1:9000/api/recipes/create
 Content-Type: application/json
 
 {
-    "name": "Gyümülcs leves",
+    "name": "Paprikás 5",
     "description": "Teszt",
     "steps": ["1", "2", "3", "4", "5", "6", "7"],
-    "createUserId": "1111111111"
+    "createUserId": "1111111111",
+    "categoriesIds": ["6425cda503c0b17bbc945846", "6425cdb403c0b17bbc945848", "6425cd9403c0b17bbc945844"]
 }
 
 ###
@@ -65,9 +66,9 @@ POST http://127.0.0.1:9000/api/users/register
 Content-Type: application/json
 
 {
-    "username": "teszt3",
-    "email": "teszt3@teszt3.com",
-    "password": "teszt3"
+    "username": "teszt1",
+    "email": "teszt1@teszt1.com",
+    "password": "teszt1"
 }
 
 ###
@@ -78,3 +79,6 @@ Content-Type: application/json
     "email": "teszt3@teszt3.com",
     "password": "teszt2"
 }
+
+###
+GET http://127.0.0.1:9000/api/recipes/category/6425cd9403c0b17bbc945844

@@ -42,10 +42,10 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
     const createdRecipe = {
         name: req.body.name,
         description: req.body.description,
-        steps: [req.body.steps],
-        ingredients: [req.body.ingredients],
+        steps: req.body.steps,
+        ingredients: req.body.ingredients,
         createUserId: req.body.createUserId,
-        categoriesIds: [req.body.categoriesIds],
+        categoriesIds: req.body.categoriesIds,
         comments: [],
         isEnable: false,
         imageUrl: req.file ? url + '/images/recipes/' + req.file.filename : ''
@@ -93,8 +93,21 @@ router.get("/search/:name", async (req, res) => {
 
 // Get recipes by categoryId
 router.get('/category/:categoryId', async (req, res) => {
-    const categoryId = req.params.categoryId;
+    const categoryId = validId(req.params.categoryId);
+    if(categoryId === "") {
+        res.status(404).send({
+            message: "Not valid id: " + req.params.categoryId,
+        });
+        return;
+    }
     const recipes = await Recipe.find({categoriesIds: {$regex: categoryId}});
+    console.log(recipes);
+    if(recipes.length == 0) {
+        res.status(404).send({
+            message: "Not found recipe with id: " + req.params.categoryId,
+        });
+        return;
+    }
     res.send(recipes).status(200);
 })
 
