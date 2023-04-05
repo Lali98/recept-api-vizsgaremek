@@ -4,28 +4,31 @@ const Recipe = require("../models/Recipe");
 const {isValidObjectId} = require("mongoose");
 const multer = require("multer");
 const mongoose = require("mongoose");
+const fs = require('fs');
+const path = require("path");
 
-const DIR = './images/recipes';
-const storage = multer.diskStorage({
-    filename: (req, file, cb) => {
-        const fileName = file.originalname.toLowerCase().split(' ').join('-');
-        cb(null,  + Date.now() + '-' + fileName);
-    },
-    destination: (req, file, cb) => {
-        cb(null, DIR);
-    }
-})
-const upload = multer({
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === "image/jpeg") {
-            cb(null, true);
-        } else {
-            cb(null, false);
-            return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-        }
-    }
-});
+// const storage = multer.diskStorage({
+//     filename: (req, file, cb) => {
+//         const fileName = file.originalname.toLowerCase().split(' ').join('-');
+//         cb(null,  + Date.now() + '-' + fileName);
+//     },
+//     destination: (req, file, cb) => {
+//         cb(null, DIR);
+//     }
+// })
+// const upload = multer({
+//     storage: storage,
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === "image/jpeg") {
+//             cb(null, true);
+//         } else {
+//             cb(null, false);
+//             return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+//         }
+//     }
+// });
+
+const upload = multer();
 
 const router = express.Router();
 
@@ -38,7 +41,14 @@ function validId(id) {
 
 // Create recipe
 router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (req, res) => {
-    const url = req.protocol + "://" + req.get('host');
+    let create = {
+        imageUrl: ""
+    };
+    if(req.file) {
+        await writeFile(`../public/images/${req.file.originalname}`, req.file.buffer);
+        create.imageUrl = req.file.originalname;
+    }
+
     const createdRecipe = {
         name: req.body.name,
         description: req.body.description,
@@ -48,11 +58,11 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         categoriesIds: req.body.categoriesIds,
         comments: [],
         isEnable: false,
-        imageUrl: req.file ? url + '/images/recipes/' + req.file.filename : ''
+        ...create
     };
+
     const result = await Recipe.create(createdRecipe);
-    res
-        .send({
+    res.send({
             _id: result._id,
             ...result._doc,
         })
@@ -121,7 +131,13 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         return;
     }
 
-    const url = req.protocol + "://" + req.get('host');
+    let create = {
+        imageUrl: ""
+    };
+    if(req.file) {
+        await writeFile(`../public/images/${Date.now()}-${req.file.originalname}`, req.file.buffer);
+        create.imageUrl = req.file.originalname;
+    }
 
     const rec = await Recipe.findById(id);
     if (rec === null) {
@@ -137,8 +153,8 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         steps: req.body.steps,
         ingredients: req.body.ingredients,
         categoriesIds: req.body.categoriesIds,
-        imageUrl: req.file ? url + '/images/recipes/' + req.file.fileName : rec.imageUrl,
-        isEnable: req.body.isEnable
+        isEnable: req.body.isEnable,
+        ...create
     }
 
     const recipe = await Recipe.findByIdAndUpdate(id, updateRecipe, {new: true});
@@ -284,5 +300,13 @@ router.delete("/:id/comment/:commentId", async (req, res) => {
     });
     res.send(updateRecipe).status(200);
 });
+
+function writeFile(filePath, content) {
+    return new Promise((res, rej) => {
+      fs.writeFile(path.join(__dirname, ...filePath.split("/")), content, (err) => {
+        err ? rej(err) : res();
+      });
+    });
+  }
 
 module.exports = router;

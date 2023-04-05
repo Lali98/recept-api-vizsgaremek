@@ -10,6 +10,7 @@ require('dotenv').config();
 const app = express();
 app.use(logger("dev"));
 app.use(cors());
+app.use("/static", express.static("public"));
 
 mongoose.connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@clusterdatabase.l9w4xco.mongodb.net/receptek?retryWrites=true&w=majority`, {useNewUrlParser: true})
     .then(() => {
@@ -22,7 +23,3 @@ mongoose.connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MO
 app.use("/api/recipes", recipesApi);
 app.use("/api/users", usersApi);
 app.use("/api/categories", categoriesApi);
-
-app.get("/images/recipes/:filename", (req, res) => {
-    res.sendFile(__dirname + '/images/recipes/' + req.params.filename);
-})

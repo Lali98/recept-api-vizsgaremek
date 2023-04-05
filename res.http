@@ -2,7 +2,7 @@ POST http://127.0.0.1:9000/api/recipes/create
 Content-Type: application/json
 
 {
-    "name": "Paprikás 5",
+    "name": "Húsvéti sonka 3",
     "description": "Teszt",
     "steps": ["1", "2", "3", "4", "5", "6", "7"],
     "createUserId": "1111111111",
@@ -13,7 +13,7 @@ Content-Type: application/json
 GET http://127.0.0.1:9000/api/recipes
 
 ###
-GET http://127.0.0.1:9000/api/recipes/63f6597e656e1e7bf6406725
+GET http://127.0.0.1:9000/api/recipes/642aaea327a32f54a84f1509
 
 ###
 GET http://127.0.0.1:9000/api/recipes/search/leves
