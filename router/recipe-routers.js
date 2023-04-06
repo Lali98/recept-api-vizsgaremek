@@ -55,7 +55,7 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         steps: req.body.steps,
         ingredients: req.body.ingredients,
         createUserId: req.body.createUserId,
-        categoriesIds: req.body.categoriesIds,
+        categoriesId: req.body.categoriesIds,
         comments: [],
         isEnable: false,
         ...create
@@ -110,7 +110,7 @@ router.get('/category/:categoryId', async (req, res) => {
         });
         return;
     }
-    const recipes = await Recipe.find({categoriesIds: {$regex: categoryId}});
+    const recipes = await Recipe.find({categoriesId: categoryId});
     console.log(recipes);
     if(recipes.length == 0) {
         res.status(404).send({
@@ -135,7 +135,7 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         imageUrl: ""
     };
     if(req.file) {
-        await writeFile(`../public/images/${Date.now()}-${req.file.originalname}`, req.file.buffer);
+        await writeFile(`../public/images/${req.file.originalname}`, req.file.buffer);
         create.imageUrl = req.file.originalname;
     }
 
@@ -152,7 +152,7 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         description: req.body.description,
         steps: req.body.steps,
         ingredients: req.body.ingredients,
-        categoriesIds: req.body.categoriesIds,
+        categoriesId: req.body.categoriesIds,
         isEnable: req.body.isEnable,
         ...create
     }
