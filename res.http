@@ -2,11 +2,28 @@ POST http://127.0.0.1:9000/api/recipes/create
 Content-Type: application/json
 
 {
-    "name": "Húsvéti sonka 3",
-    "description": "Teszt",
-    "steps": ["1", "2", "3", "4", "5", "6", "7"],
+    "name": "FŰSZERES VÉRES HURKA",
+    "description": "Cedes és Kovács Áron receptje",
+    "steps": [
+        "A sütőt 180 fokra előmelegítjük, majd körülbelül 15 perc alatt megsütjük benne a hurkát.",
+        "Amíg a hús elkészül, a meghámozott, apró kockákra vágott csicsókát kevés olajon aranybarnára pirítjuk.",
+        "Az édesköményt vékony szeletekre vágjuk összeforgatjuk a gyümölcsecettel, majd a mézzel, utána pedig sózzuk, borsozzuk.",
+        "Tálaláskor szépen a hurka mellé helyezzük a csicsókát, az édeskömény-salátát, majd egy mustárcsíkkal és egy tükörtojással díszitjük."
+    ],
     "createUserId": "1111111111",
-    "categoriesIds": ["6425cda503c0b17bbc945846", "6425cdb403c0b17bbc945848", "6425cd9403c0b17bbc945844"]
+    "categoriesIds": "6425cda503c0b17bbc945846",
+    "ingredients": [
+        "30dkg véreshurka",
+        "1dl étolaj",
+        "só",
+        "bors",
+        "2db tojás",
+        "5dkg vaj",
+        "3db csicsóka",
+        "2db kaffir lime levél",
+        "1db édeskömény",
+        "1dl gyümölcsecet"
+    ]
 }
 
 ###
@@ -81,4 +98,4 @@ Content-Type: application/json
 }
 
 ###
-GET http://127.0.0.1:9000/api/recipes/category/6425cd9403c0b17bbc945844
+GET http://127.0.0.1:9000/api/recipes/category/6425cdb403c0b17bbc945848
