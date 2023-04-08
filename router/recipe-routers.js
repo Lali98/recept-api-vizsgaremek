@@ -154,8 +154,10 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         ingredients: req.body.ingredients,
         categoriesId: req.body.categoriesIds,
         isEnable: req.body.isEnable,
-        ...create
+        imageUrl: create.imageUrl != '' ? create.imageUrl : rec.imageUrl
     }
+
+    console.log(updateRecipe);
 
     const recipe = await Recipe.findByIdAndUpdate(id, updateRecipe, {new: true});
     if (recipe === null) {
