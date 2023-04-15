@@ -45,9 +45,12 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         imageUrl: ""
     };
     if(req.file) {
-        await writeFile(`../public/images/${req.file.originalname}`, req.file.buffer);
-        create.imageUrl = req.file.originalname;
+        const filename = Math.floor(Math.random() * 100000) + '_' + req.file.originalname
+        await writeFile(`../public/images/${filename}`, req.file.buffer);
+        create.imageUrl = filename;
     }
+
+    console.log(req.body);
 
     const createdRecipe = {
         name: req.body.name,
@@ -55,7 +58,7 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
         steps: req.body.steps,
         ingredients: req.body.ingredients,
         createUserId: req.body.createUserId,
-        categoriesId: req.body.categoriesIds,
+        categoriesId: req.body.categoriesId,
         comments: [],
         isEnable: false,
         ...create
@@ -135,8 +138,9 @@ router.put("/:id", upload.single('recipeImage'), bodyParser.json(), async (req, 
         imageUrl: ""
     };
     if(req.file) {
-        await writeFile(`../public/images/${req.file.originalname}`, req.file.buffer);
-        create.imageUrl = req.file.originalname;
+        const filename = Math.floor(Math.random() * 100000) + '_' + req.file.originalname
+        await writeFile(`../public/images/${filename}`, req.file.buffer);
+        create.imageUrl = filename;
     }
 
     const rec = await Recipe.findById(id);
