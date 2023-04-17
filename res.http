@@ -83,9 +83,9 @@ POST http://127.0.0.1:9000/api/users/register
 Content-Type: application/json
 
 {
-    "username": "teszt1",
-    "email": "teszt1@teszt1.com",
-    "password": "teszt1"
+    "username": "teszt10",
+    "email": "teszt10@teszt10.com",
+    "password": "teszt10"
 }
 
 ###
@@ -93,8 +93,8 @@ POST http://127.0.0.1:9000/api/users/login
 Content-Type: application/json
 
 {
-    "email": "teszt3@teszt3.com",
-    "password": "teszt2"
+    "email": "admin@delicious.com",
+    "password": "Passw123"
 }
 
 ###
