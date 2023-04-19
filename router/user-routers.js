@@ -6,6 +6,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { isValidObjectId } = require("mongoose");
 require("dotenv").config();
+const multer = require('multer');
+
+const upload = multer();
 
 const router = express.Router();
 
@@ -17,7 +20,7 @@ function validId(id) {
   }
 
 // Create a new user
-router.post("/register", bodyParser.json(), async (req, res) => {
+router.post("/register", upload.none(), async (req, res) => {
   const oldUser = await User.findOne({ email: req.body.email });
   if (oldUser) {
     res.status(400).send({ message: "User already exists" });
@@ -30,7 +33,7 @@ router.post("/register", bodyParser.json(), async (req, res) => {
     password: encryptedPassword,
   });
   const token = jwt.sign({ user_id: newUser._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
   newUser.token = token;
   const result = await newUser.save();
@@ -38,7 +41,7 @@ router.post("/register", bodyParser.json(), async (req, res) => {
 });
 
 // Login a user
-router.post("/login", bodyParser.json(), async (req, res) => {
+router.post("/login", upload.none(), async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     res.status(400).send({ message: "User does not exist" });
@@ -50,7 +53,7 @@ router.post("/login", bodyParser.json(), async (req, res) => {
     return;
   }
   const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
   user.token = token;
   const result = await user.save();
@@ -64,7 +67,7 @@ router.put("/update", bodyParser.json(), async (req, res) => {
     { user_id: req.body.user_id },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
+      expiresIn: "24h",
     }
   );
   const result = await User.findOneAndUpdate(
