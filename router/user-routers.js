@@ -13,11 +13,11 @@ const upload = multer();
 const router = express.Router();
 
 function validId(id) {
-    if (isValidObjectId(id)) {
-      return id;
-    }
-    return "";
+  if (isValidObjectId(id)) {
+    return id;
   }
+  return "";
+}
 
 // Create a new user
 router.post("/register", upload.none(), async (req, res) => {
@@ -72,44 +72,44 @@ router.put("/update", bodyParser.json(), async (req, res) => {
   );
   const result = await User.findOneAndUpdate(
     { email: req.body.email }, {
-      username: req.body.username,
-      email: req.body.email.toLowerCase(),
-      password: encryptedNewPassword,
-      role: req.body.role,
-      token: token
-    }, { new: true }
+    username: req.body.username,
+    email: req.body.email.toLowerCase(),
+    password: encryptedNewPassword,
+    role: req.body.role,
+    token: token
+  }, { new: true }
   );
   res.status(200).send(result);
 });
 
 // Delete a user
 router.delete('/delete/:id', async (req, res) => {
-    const id = validId(req.params.id);
-    if(id === "") {
-        res.status(404).send({ message: "Not valid id: " + req.params.id});
-        return;
-    }
-    const result = await User.findByIdAndDelete(id);
-    if (!result) {
-        res.status(404).send({ message: 'User not found' });
-        return;
-    }
-    res.status(204).send();
+  const id = validId(req.params.id);
+  if (id === "") {
+    res.status(404).send({ message: "Not valid id: " + req.params.id });
+    return;
+  }
+  const result = await User.findByIdAndDelete(id);
+  if (!result) {
+    res.status(404).send({ message: 'User not found' });
+    return;
+  }
+  res.status(204).send();
 });
 
 // Get user by id
 router.get("/:id", async (req, res) => {
-    const id = validId(req.params.id);
-    if(id === "") {
-        res.status(404).send({ message: "Not valid id: " + req.params.id});
-        return;
-    }
-    const result = await User.findById(id);
-    if (!result) {
-        res.status(404).send({ message: 'User not found' });
-        return;
-    }
-    res.status(200).send(result);
+  const id = validId(req.params.id);
+  if (id === "") {
+    res.status(404).send({ message: "Not valid id: " + req.params.id });
+    return;
+  }
+  const result = await User.findById(id);
+  if (!result) {
+    res.status(404).send({ message: 'User not found' });
+    return;
+  }
+  res.status(200).send(result);
 });
 
 module.exports = router;

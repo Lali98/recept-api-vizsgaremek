@@ -52,19 +52,19 @@ router.post("/create", upload.single('recipeImage'), bodyParser.json(), async (r
 
     console.log(req.body);
 
-    const createdRecipe = {
+    const createdRecipe = new Recipe({
         name: req.body.name,
         description: req.body.description,
         steps: req.body.steps,
         ingredients: req.body.ingredients,
-        createUserId: req.body.createUserId,
+        createdUserId: req.body.createdUserId,
         categoriesId: req.body.categoriesId,
         comments: [],
         isEnable: false,
         ...create
-    };
+    });
 
-    const result = await Recipe.create(createdRecipe);
+    const result = await createdRecipe.save();
     res.send({
             _id: result._id,
             ...result._doc,
