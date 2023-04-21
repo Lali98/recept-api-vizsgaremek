@@ -61,8 +61,7 @@ router.post("/login", upload.none(), async (req, res) => {
 });
 
 // Update a user
-router.put("/update", bodyParser.json(), async (req, res) => {
-  let encryptedNewPassword = await bcrypt.hash(req.body.password, 10);
+router.put("/update", upload.none(), async (req, res) => {
   const token = jwt.sign(
     { user_id: req.body.user_id },
     process.env.JWT_SECRET,
@@ -74,7 +73,6 @@ router.put("/update", bodyParser.json(), async (req, res) => {
     { email: req.body.email }, {
     username: req.body.username,
     email: req.body.email.toLowerCase(),
-    password: encryptedNewPassword,
     role: req.body.role,
     token: token
   }, { new: true }
@@ -111,5 +109,11 @@ router.get("/:id", async (req, res) => {
   }
   res.status(200).send(result);
 });
+
+//Get all user
+router.get('/', async (req, res) => {
+  const result = await User.find();
+  res.status(200).send(result);
+})
 
 module.exports = router;
