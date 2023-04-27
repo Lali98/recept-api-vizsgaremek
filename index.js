@@ -15,7 +15,7 @@ app.use("/static", express.static("public"));
 mongoose.connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@clusterdatabase.l9w4xco.mongodb.net/receptek?retryWrites=true&w=majority`, {useNewUrlParser: true})
     .then(() => {
         console.log("MongoDB Connection successful");
-        app.listen(9000, () => {
+        app.listen(process.env.PORT, () => {
             console.log("Listening on port 9000");
         });
     });
