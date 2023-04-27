@@ -11,6 +11,7 @@ const app = express();
 app.use(logger("dev"));
 app.use(cors());
 app.use("/static", express.static("public"));
+mongoose.set("strictQuery", false);
 
 mongoose.connect(`mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@clusterdatabase.l9w4xco.mongodb.net/receptek?retryWrites=true&w=majority`, {useNewUrlParser: true})
     .then(() => {
